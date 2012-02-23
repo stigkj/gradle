@@ -37,6 +37,7 @@ import static org.junit.Assert.*;
 @RunWith(JMock.class)
 public class FileCopySpecVisitorTest {
     private File destDir;
+    private File srcDir;
     private final JUnit4Mockery context = new JUnit4Mockery();
     private final FileCopySpecVisitor visitor = new FileCopySpecVisitor();
     @Rule
@@ -45,19 +46,20 @@ public class FileCopySpecVisitorTest {
     @Before
     public void setUp() throws IOException {
         destDir = tmpDir.getDir().file("dest");
+        srcDir = tmpDir.getDir().file("srcDir");
     }
 
     @Test
     public void plainCopy() {
         visitor.startVisit(action(destDir));
 
-        visitor.visitDir(file(new RelativePath(false), destDir));
+        visitor.visitDir(file(new RelativePath(false), srcDir, destDir));
 
-        visitor.visitFile(file(new RelativePath(true, "rootfile.txt"), new File(destDir, "rootfile.txt")));
+        visitor.visitFile(file(new RelativePath(true, "rootfile.txt"), new File(srcDir, "rootfile.txt"), new File(destDir, "rootfile.txt")));
 
-        visitor.visitDir(file(new RelativePath(false, "subdir"), new File(destDir, "subdir")));
+        visitor.visitDir(file(new RelativePath(false, "subdir"), new File(srcDir, "subdir"), new File(destDir, "subdir")));
 
-        visitor.visitFile(file(new RelativePath(true, "subdir", "anotherfile.txt"), new File(destDir, "subdir/anotherfile.txt")));
+        visitor.visitFile(file(new RelativePath(true, "subdir", "anotherfile.txt"), new File(srcDir, "subdir/anotherfile.txt"), new File(destDir, "subdir/anotherfile.txt")));
     }
 
     @Test
@@ -79,12 +81,18 @@ public class FileCopySpecVisitorTest {
         return action;
     }
 
-    private FileVisitDetails file(final RelativePath relativePath, final File targetFile) {
+    private FileVisitDetails file(final RelativePath relativePath, final File sourceFile, final File targetFile) {
         final FileVisitDetails details = context.mock(FileVisitDetails.class, relativePath.getPathString());
         context.checking(new Expectations(){{
             allowing(details).getRelativePath();
             will(returnValue(relativePath));
             one(details).copyTo(targetFile);
+            allowing(details).isDirectory();
+            will(returnValue(!relativePath.isFile()));
+            if(relativePath.isFile()){
+                allowing(details).getFile();
+                will(returnValue(sourceFile));
+            }
         }});
         return details;
     }

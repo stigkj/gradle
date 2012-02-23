@@ -50,6 +50,13 @@ public class FileCopySpecVisitor extends EmptyCopySpecVisitor {
     private void visitFileOrDir(FileVisitDetails source) {
         File target = source.getRelativePath().getFile(baseDestDir);
         copyFile(source, target);
+        adjustLastModified(source, target);
+    }
+
+    private void adjustLastModified(FileVisitDetails source, File target) {
+        if(!source.isDirectory() && (source.getFile().length() != target.length())){
+            target.setLastModified(System.currentTimeMillis());
+        }
     }
 
     private void copyFile(FileTreeElement srcFile, File destFile) {

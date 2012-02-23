@@ -72,11 +72,7 @@ public class MappingCopySpecVisitor extends DelegatingCopySpecVisitor {
         }
 
         public File getFile() {
-            if (filterChain.hasFilters()) {
-                throw new UnsupportedOperationException();
-            } else {
-                return fileDetails.getFile();
-            }
+             return fileDetails.getFile();
         }
 
         public boolean isDirectory() {
