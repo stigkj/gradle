@@ -26,6 +26,7 @@ import org.gradle.process.internal.launcher.GradleWorkerMain;
 import org.gradle.util.ClassPath;
 import org.gradle.util.DefaultClassPath;
 import org.gradle.util.GFileUtils;
+import org.gradle.util.internal.GradleJvmSystem;
 
 import java.io.File;
 import java.util.Arrays;
@@ -75,7 +76,8 @@ public class WorkerProcessClassPathProvider implements ClassPathProvider {
     private static class CacheInitializer implements Action<PersistentCache> {
         public void execute(PersistentCache cache) {
             File classesDir = classesDir(cache);
-            for (Class<?> aClass : Arrays.asList(GradleWorkerMain.class, BootstrapClassLoaderWorker.class)) {
+            for (Class<?> aClass : Arrays.asList(GradleWorkerMain.class,
+                    BootstrapClassLoaderWorker.class, GradleJvmSystem.class)) {
                 String fileName = aClass.getName().replace('.', '/') + ".class";
                 GFileUtils.copyURLToFile(WorkerProcessClassPathProvider.class.getClassLoader().getResource(fileName),
                         new File(classesDir, fileName));
