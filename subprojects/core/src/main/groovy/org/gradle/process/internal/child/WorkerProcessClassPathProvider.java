@@ -77,7 +77,7 @@ public class WorkerProcessClassPathProvider implements ClassPathProvider {
         public void execute(PersistentCache cache) {
             File classesDir = classesDir(cache);
             for (Class<?> aClass : Arrays.asList(GradleWorkerMain.class,
-                    BootstrapClassLoaderWorker.class, GradleJvmSystem.class)) {
+                    BootstrapClassLoaderWorker.class, GradleJvmSystem.class, GradleJvmSystem.GradleSecurityManager.class)) {
                 String fileName = aClass.getName().replace('.', '/') + ".class";
                 GFileUtils.copyURLToFile(WorkerProcessClassPathProvider.class.getClassLoader().getResource(fileName),
                         new File(classesDir, fileName));
