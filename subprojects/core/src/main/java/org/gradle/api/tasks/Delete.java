@@ -38,7 +38,7 @@ import java.util.Set;
  * }
  * </pre>
  *
- * Be default symlinks will not be followed when deleting files. To change this behavior call
+ * By default symlinks will not be followed when deleting files. To change this behavior call
  * {@link Delete#setFollowSymlinks(boolean)} with true. On systems that do not support symlinks,
  * this will have no effect.
  */
